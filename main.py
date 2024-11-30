@@ -79,8 +79,12 @@ async def handle_question(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.user_data['titles'] = titles
 
     if titles:
-        keyboard = [[InlineKeyboardButton(title, callback_data=str(i)) for i, title in enumerate(set(titles))]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
+        keyboard = []
+        for i, title in enumerate(set(titles)):
+            # Каждая кнопка в отдельной строке
+            keyboard.append([InlineKeyboardButton(title, callback_data=str(i))])
+
+        reply_markup = InlineKeyboardMarkup(keyboard)  # Каждая кнопка в отдельной строке
         await update.message.reply_text("Вот несколько заголовков из результатов поиска:", reply_markup=reply_markup)
     else:
         await update.message.reply_text("Не удалось найти результаты по вашему запросу.", reply_markup=build_menu())
@@ -89,7 +93,8 @@ async def handle_question(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработка неподдерживаемых медиа-запросов"""
     await update.message.reply_text(
-        "Я не умею обрабатывать медиа-запросы, такие как фото, видео или голосовые сообщения.", reply_markup=build_menu()
+        "Я не умею обрабатывать медиа-запросы, такие как фото, видео или голосовые сообщения.",
+        reply_markup=build_menu()
     )
 
 def main() -> None:
